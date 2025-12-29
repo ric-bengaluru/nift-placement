@@ -15,7 +15,7 @@ jobs:
       - name: Checkout data branch
         uses: actions/checkout@v3
         with:
-          ref: data
+          ref: Data
           token: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Setup Node.js
@@ -105,6 +105,6 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "Update placement data - $(date '+%Y-%m-%d %H:%M:%S')"
-            git push origin data --force
+            git push origin Data --force
             echo "Data updated and pushed successfully"
           fi
