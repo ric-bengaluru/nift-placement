@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIFT Bengaluru - Campus Placement 2025</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header id="main-header">
+        <div class="header-container">
+            <div class="logo-section">
+                <img src="images/logo.png" alt="NIFT Logo" class="logo">
+                <h1>NIFT Bengaluru - Campus Placement 2025</h1>
+            </div>
+            
+            <nav class="desktop-nav">
+                <a href="#home" class="nav-link active" data-page="home">Home</a>
+                <a href="#day1" class="nav-link" data-page="day1">Day 1</a>
+                <a href="#day2" class="nav-link" data-page="day2">Day 2</a>
+                <a href="#day3" class="nav-link" data-page="day3">Day 3</a>
+                <a href="#placements" class="nav-link" data-page="placements">Placements</a>
+            </nav>
+            
+            <div class="header-actions">
+                <button id="dark-mode-toggle" class="icon-btn" title="Toggle Dark Mode">
+                    <span class="icon">🌙</span>
+                </button>
+                <button id="search-btn" class="icon-btn" title="Search Roll Number">
+                    <span class="icon">🔍</span>
+                </button>
+                <button id="mobile-menu-btn" class="icon-btn mobile-only">
+                    <span class="icon">☰</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation -->
+    <nav id="mobile-nav" class="mobile-nav hidden">
+        <a href="#home" class="nav-link" data-page="home">🏠 Home</a>
+        <a href="#day1" class="nav-link" data-page="day1">📅 Day 1</a>
+        <a href="#day2" class="nav-link" data-page="day2">📅 Day 2</a>
+        <a href="#day3" class="nav-link" data-page="day3">📅 Day 3</a>
+        <a href="#placements" class="nav-link" data-page="placements">🎓 Placements</a>
+    </nav>
+
+    <!-- Search Modal -->
+    <div id="search-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🔍 Search by Roll Number</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="search-input-group">
+                    <input type="text" id="search-input" placeholder="Enter Roll Number (e.g., MFM/23/194)" />
+                    <select id="search-day-select" class="day-select">
+                        <option value="">Select Day</option>
+                        <option value="1">Day 1</option>
+                        <option value="2">Day 2</option>
+                        <option value="3">Day 3</option>
+                    </select>
+                    <button id="search-submit-btn" class="primary-btn">Search</button>
+                </div>
+                <div id="search-results" class="search-results"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <!-- Home Page -->
+        <div id="home-page" class="page active">
+            <!-- Announcements Marquee -->
+            <section class="announcements-section">
+                <div class="section-header">
+                    <h2>📢 Live Announcements</h2>
+                </div>
+                <div class="marquee-container">
+                    <div id="announcements-marquee" class="marquee-content">
+                        <p>Loading announcements...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Image Carousel -->
+            <section class="carousel-section">
+                <div class="carousel-container">
+                    <button class="carousel-arrow carousel-prev" aria-label="Previous">‹</button>
+                    <div class="carousel-track-container">
+                        <div class="carousel-track" id="carousel-track">
+                            <div class="carousel-slide">
+                                <img src="images/placements/placement-1.jpg" alt="Placement Photo 1">
+                                <div class="carousel-caption">Students receiving offer letters - Day 1</div>
+                            </div>
+                            <div class="carousel-slide">
+                                <img src="images/placements/placement-2.jpg" alt="Placement Photo 2">
+                                <div class="carousel-caption">Campus placement ceremony 2025</div>
+                            </div>
+                            <div class="carousel-slide">
+                                <img src="images/placements/placement-3.jpg" alt="Placement Photo 3">
+                                <div class="carousel-caption">Interview sessions in progress</div>
+                            </div>
+                            <div class="carousel-slide">
+                                <img src="images/placements/placement-4.jpg" alt="Placement Photo 4">
+                                <div class="carousel-caption">Company presentations at NIFT Bengaluru</div>
+                            </div>
+                            <div class="carousel-slide">
+                                <img src="images/placements/placement-5.jpg" alt="Placement Photo 5">
+                                <div class="carousel-caption">Successful placements celebration</div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="carousel-arrow carousel-next" aria-label="Next">›</button>
+                    <div class="carousel-dots" id="carousel-dots"></div>
+                </div>
+            </section>
+
+            <!-- Quick Access -->
+            <section class="quick-access-section">
+                <h2>Quick Access</h2>
+                <div class="quick-access-grid">
+                    <a href="#day1" class="quick-card" data-page="day1">
+                        <span class="card-icon">📅</span>
+                        <h3>Day 1 Schedule</h3>
+                        <p>View companies and timings</p>
+                    </a>
+                    <a href="#day2" class="quick-card" data-page="day2">
+                        <span class="card-icon">📅</span>
+                        <h3>Day 2 Schedule</h3>
+                        <p>View companies and timings</p>
+                    </a>
+                    <a href="#day3" class="quick-card" data-page="day3">
+                        <span class="card-icon">📅</span>
+                        <h3>Day 3 Schedule</h3>
+                        <p>View companies and timings</p>
+                    </a>
+                    <a href="#placements" class="quick-card" data-page="placements">
+                        <span class="card-icon">🎓</span>
+                        <h3>Placements</h3>
+                        <p>View placed candidates</p>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Latest Updates -->
+            <section class="updates-section">
+                <h2>Latest Updates</h2>
+                <div id="latest-updates" class="updates-list">
+                    <p>Loading updates...</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- Day Pages (Day 1, 2, 3) -->
+        <div id="day1-page" class="page day-page">
+            <div class="page-header">
+                <h1>Day 1 - Company Schedule</h1>
+                <p class="page-subtitle">05.05.2025</p>
+            </div>
+            <div id="day1-content" class="schedule-content">
+                <p>Loading Day 1 schedule...</p>
+            </div>
+        </div>
+
+        <div id="day2-page" class="page day-page">
+            <div class="page-header">
+                <h1>Day 2 - Company Schedule</h1>
+                <p class="page-subtitle">06.05.2025</p>
+            </div>
+            <div id="day2-content" class="schedule-content">
+                <p>Loading Day 2 schedule...</p>
+            </div>
+        </div>
+
+        <div id="day3-page" class="page day-page">
+            <div class="page-header">
+                <h1>Day 3 - Company Schedule</h1>
+                <p class="page-subtitle">07.05.2025</p>
+            </div>
+            <div id="day3-content" class="schedule-content">
+                <p>Loading Day 3 schedule...</p>
+            </div>
+        </div>
+
+        <!-- Placements Page -->
+        <div id="placements-page" class="page">
+            <div class="page-header">
+                <h1>Placed Candidates</h1>
+                <div class="placements-tabs">
+                    <button class="tab-btn active" data-day="all">All</button>
+                    <button class="tab-btn" data-day="1">Day 1</button>
+                    <button class="tab-btn" data-day="2">Day 2</button>
+                    <button class="tab-btn" data-day="3">Day 3</button>
+                </div>
+            </div>
+            <div id="placements-content" class="placements-content">
+                <p>Loading placements...</p>
+            </div>
+        </div>
+
+        <!-- Company Details Page (Dynamic) -->
+        <div id="company-page" class="page">
+            <button class="back-btn">← Back to Schedule</button>
+            <div class="page-header">
+                <h1 id="company-name">Company Name</h1>
+                <p id="company-details" class="page-subtitle"></p>
+            </div>
+            <div class="company-tabs">
+                <button class="company-tab-btn active" data-section="registered">Registered</button>
+                <button class="company-tab-btn" data-section="round1">Round 1</button>
+                <button class="company-tab-btn" data-section="round2">Round 2</button>
+                <button class="company-tab-btn" data-section="round3">Round 3</button>
+                <button class="company-tab-btn" data-section="selected">Selected</button>
+            </div>
+            <div id="company-content" class="company-content">
+                <p>Loading company data...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p>NIFT Bengaluru Campus Placement 2025</p>
+            <p class="visit-counter">
+                <span class="counter-icon">👥</span>
+                <span id="visit-count">Loading...</span> visits
+            </p>
+        </div>
+    </footer>
+
+    <!-- Bottom Navigation (Mobile) -->
+    <nav class="bottom-nav mobile-only">
+        <a href="#home" class="bottom-nav-item active" data-page="home">
+            <span class="icon">🏠</span>
+            <span class="label">Home</span>
+        </a>
+        <a href="#day1" class="bottom-nav-item" data-page="day1">
+            <span class="icon">1️⃣</span>
+            <span class="label">Day 1</span>
+        </a>
+        <a href="#day2" class="bottom-nav-item" data-page="day2">
+            <span class="icon">2️⃣</span>
+            <span class="label">Day 2</span>
+        </a>
+        <a href="#day3" class="bottom-nav-item" data-page="day3">
+            <span class="icon">3️⃣</span>
+            <span class="label">Day 3</span>
+        </a>
+        <a href="#placements" class="bottom-nav-item" data-page="placements">
+            <span class="icon">🎓</span>
+            <span class="label">Placed</span>
+        </a>
+    </nav>
+
+    <script src="js/carousel.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
