@@ -16,10 +16,8 @@ jobs:
           ref: Data
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
+      
+      # REMOVED: Install jq step - it's already pre-installed!
 
       - name: Fetch and update data
         env:
@@ -32,13 +30,32 @@ jobs:
 
           echo "=== Fetching Dashboard Data ==="
           curl -sL "${DASHBOARD_SCRIPT_URL}" > data/dashboard.json
-          echo "Dashboard data fetched"
+          
+          # Validate dashboard JSON
+          if jq empty data/dashboard.json >/dev/null 2>&1; then
+            echo "✓ Dashboard data fetched successfully"
+          else
+            echo "ERROR: Invalid dashboard JSON"
+            cat data/dashboard.json
+            exit 1
+          fi
 
           fetch_day_data() {
             local day=$1
             local script_url=$2
 
+            echo ""
             echo "=== Fetching Day ${day} Data ==="
+            
+            # Check if URL is placeholder
+            if [[ "$script_url" == "https://example.com" ]] || [[ "$script_url" == "" ]]; then
+              echo "⚠ Day ${day} script not deployed yet - skipping"
+              # Create empty placeholder files
+              echo '{"day":'${day}',"available":false,"schedule":[]}' > "data/day${day}-schedule.json"
+              echo '{"day":'${day}',"placements":[]}' > "data/day${day}-placed.json"
+              echo '{"day":'${day}',"companies":[]}' > "data/day${day}-companies.json"
+              return 0
+            fi
 
             echo "Fetching schedule..."
             curl -sL "${script_url}?action=schedule" > "data/day${day}-schedule.json"
@@ -51,42 +68,50 @@ jobs:
 
             echo "Validating company list JSON..."
             if ! jq empty "data/day${day}-companies.json" >/dev/null 2>&1; then
-            echo "❌ Invalid JSON received for company list (Day ${day})"
-            echo "Response content:"
-            cat "data/day${day}-companies.json"
-            exit 1
+              echo "ERROR: Invalid JSON received for company list (Day ${day})"
+              echo "Response content:"
+              cat "data/day${day}-companies.json"
+              echo "⚠ Skipping company data fetch for Day ${day}"
+              return 0
             fi
 
             echo "Extracting company names..."
-            companies=$(jq -r '.companies[]' "data/day${day}-companies.json")
+            companies=$(jq -r '.companies[]' "data/day${day}-companies.json" 2>/dev/null)
 
+            if [ -z "$companies" ]; then
+              echo "⚠ No companies found for Day ${day}"
+            else
+              echo "✓ Companies found for Day ${day}:"
+              echo "$companies"
 
-            echo "Companies found for Day ${day}:"
-            echo "$companies"
+              for company in $companies; do
+                encoded_company=$(printf '%s' "$company" | jq -sRr @uri)
 
-            for company in $companies; do
-              encoded_company=$(printf '%s' "$company" | jq -sRr @uri)
+                echo "  → Fetching: ${company}"
+                curl -sL "${script_url}?action=company&name=${encoded_company}" \
+                  > "data/companies/day${day}-${company}.json"
 
-              echo "Fetching company data: day${day}-${company}"
-              curl -sL "${script_url}?action=company&name=${encoded_company}" \
-                > "data/companies/day${day}-${company}.json"
+                sleep 0.5
+              done
+            fi
 
-              sleep 0.5
-            done
-
-            echo "Day ${day} data fetch completed"
+            echo "✓ Day ${day} data fetch completed"
           }
 
           fetch_day_data 1 "${DAY1_SCRIPT_URL}"
           fetch_day_data 2 "${DAY2_SCRIPT_URL}"
           fetch_day_data 3 "${DAY3_SCRIPT_URL}"
 
+          echo ""
           echo "=== All Data Fetched Successfully ==="
           echo "Fetch completed at $(date)"
 
+          echo ""
           echo "=== Generated Files ==="
-          ls -lh data/
-          ls -lh data/companies/ | head -20
+          ls -lh data/ 2>/dev/null || echo "No files in data/"
+          echo ""
+          echo "=== Company Files ==="
+          ls -lh data/companies/ 2>/dev/null | head -20 || echo "No company files yet"
 
       - name: Commit and force push
         run: |
@@ -100,5 +125,5 @@ jobs:
           else
             git commit -m "Update placement data - $(date '+%Y-%m-%d %H:%M:%S')"
             git push origin Data --force
-            echo "Data updated and pushed successfully"
+            echo "✓ Data updated and pushed successfully"
           fi
