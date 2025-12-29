@@ -49,8 +49,17 @@ jobs:
             echo "Fetching company list..."
             curl -s "${script_url}?action=companies" > "data/day${day}-companies.json"
 
+            echo "Validating company list JSON..."
+            if ! jq empty "data/day${day}-companies.json" >/dev/null 2>&1; then
+            echo "❌ Invalid JSON received for company list (Day ${day})"
+            echo "Response content:"
+            cat "data/day${day}-companies.json"
+            exit 1
+            fi
+
             echo "Extracting company names..."
             companies=$(jq -r '.companies[]' "data/day${day}-companies.json")
+
 
             echo "Companies found for Day ${day}:"
             echo "$companies"
