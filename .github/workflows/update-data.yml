@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Data branch
+      - name: Checkout main branch
         uses: actions/checkout@v3
         with:
-          ref: Data
+          ref: main
           token: ${{ secrets.GITHUB_TOKEN }}
 
       
@@ -26,9 +26,9 @@ jobs:
           DAY2_SCRIPT_URL: ${{ secrets.DAY2_SCRIPT_URL }}
           DAY3_SCRIPT_URL: ${{ secrets.DAY3_SCRIPT_URL }}
         run: |
-          mkdir -p data/companies
+          mkdir -p /companies
 
-          echo "=== Fetching Dashboard Data ==="
+          echo "=== Fetching Dashboard main ==="
           curl -sL "${DASHBOARD_SCRIPT_URL}" > data/dashboard.json
           
           # Validate dashboard JSON
@@ -45,7 +45,7 @@ jobs:
             local script_url=$2
 
             echo ""
-            echo "=== Fetching Day ${day} Data ==="
+            echo "=== Fetching Day ${day} main ==="
             
             # Check if URL is placeholder
             if [[ "$script_url" == "https://example.com" ]] || [[ "$script_url" == "" ]]; then
