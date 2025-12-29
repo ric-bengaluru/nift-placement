@@ -1,0 +1,110 @@
+# .github/workflows/update-data.yml
+name: Update Placement Data
+
+on:
+  schedule:
+    # Run every 1 minute
+    - cron: '*/1 * * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout data branch
+        uses: actions/checkout@v3
+        with:
+          ref: data
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Fetch and update data
+        env:
+          DASHBOARD_SCRIPT_URL: ${{ secrets.DASHBOARD_SCRIPT_URL }}
+          DAY1_SCRIPT_URL: ${{ secrets.DAY1_SCRIPT_URL }}
+          DAY2_SCRIPT_URL: ${{ secrets.DAY2_SCRIPT_URL }}
+          DAY3_SCRIPT_URL: ${{ secrets.DAY3_SCRIPT_URL }}
+        run: |
+          # Create data directory if doesn't exist
+          mkdir -p data/companies
+          
+          echo "=== Fetching Dashboard Data ==="
+          curl -s "${DASHBOARD_SCRIPT_URL}" > data/dashboard.json
+          echo "Dashboard data fetched"
+          
+          # Function to fetch day data
+          fetch_day_data() {
+            local day=$1
+            local script_url=$2
+            
+            echo "=== Fetching Day ${day} Data ==="
+            
+            # Fetch schedule
+            echo "Fetching Day ${day} schedule..."
+            curl -s "${script_url}?action=schedule" > "data/day${day}-schedule.json"
+            
+            # Fetch placed candidates
+            echo "Fetching Day ${day} placed candidates..."
+            curl -s "${script_url}?action=placed" > "data/day${day}-placed.json"
+            
+            # Get company list
+            echo "Fetching Day ${day} company list..."
+            curl -s "${script_url}?action=companies" > "data/day${day}-companies.json"
+            
+            # Extract company sheet names from the list
+            companies=$(cat "data/day${day}-companies.json" | grep -o '"[^"]*"' | grep -v companies | grep -v lastUpdated | grep -v day | sed 's/"//g')
+            
+            # If grep fails, try alternative method using schedule JSON
+            if [ -z "$companies" ]; then
+              echo "Trying alternative method to extract companies..."
+              companies=$(cat "data/day${day}-schedule.json" | grep -o '"sheetName":"[^"]*"' | cut -d'"' -f4)
+            fi
+            
+            # Fetch each company's data
+            echo "Companies found for Day ${day}: ${companies}"
+            for company in $companies; do
+              if [ ! -z "$company" ] && [ "$company" != "null" ]; then
+                echo "Fetching company data: day${day}-${company}"
+                curl -s "${script_url}?action=company&name=${company}" > "data/companies/day${day}-${company}.json"
+                
+                # Brief pause to avoid rate limiting
+                sleep 0.5
+              fi
+            done
+            
+            echo "Day ${day} data fetch completed"
+          }
+          
+          # Fetch data for all three days
+          fetch_day_data 1 "${DAY1_SCRIPT_URL}"
+          fetch_day_data 2 "${DAY2_SCRIPT_URL}"
+          fetch_day_data 3 "${DAY3_SCRIPT_URL}"
+          
+          echo "=== All Data Fetched Successfully ==="
+          echo "Fetch completed at $(date)"
+          
+          # List generated files for verification
+          echo "=== Generated Files ==="
+          ls -lh data/
+          ls -lh data/companies/ | head -20
+      
+      - name: Commit and force push
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          
+          git add data/
+          
+          # Check if there are changes
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Update placement data - $(date '+%Y-%m-%d %H:%M:%S')"
+            git push origin data --force
+            echo "Data updated and pushed successfully"
+          fi
