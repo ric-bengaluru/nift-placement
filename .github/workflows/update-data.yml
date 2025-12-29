@@ -26,7 +26,7 @@ jobs:
           DAY2_SCRIPT_URL: ${{ secrets.DAY2_SCRIPT_URL }}
           DAY3_SCRIPT_URL: ${{ secrets.DAY3_SCRIPT_URL }}
         run: |
-          mkdir -p /companies
+          mkdir -p data/companies
 
           echo "=== Fetching Dashboard main ==="
           curl -sL "${DASHBOARD_SCRIPT_URL}" > data/dashboard.json
