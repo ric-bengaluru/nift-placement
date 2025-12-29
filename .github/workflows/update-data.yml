@@ -31,7 +31,7 @@ jobs:
           mkdir -p data/companies
 
           echo "=== Fetching Dashboard Data ==="
-          curl -s "${DASHBOARD_SCRIPT_URL}" > data/dashboard.json
+          curl -sL "${DASHBOARD_SCRIPT_URL}" > data/dashboard.json
           echo "Dashboard data fetched"
 
           fetch_day_data() {
@@ -41,13 +41,13 @@ jobs:
             echo "=== Fetching Day ${day} Data ==="
 
             echo "Fetching schedule..."
-            curl -s "${script_url}?action=schedule" > "data/day${day}-schedule.json"
+            curl -sL "${script_url}?action=schedule" > "data/day${day}-schedule.json"
 
             echo "Fetching placed candidates..."
-            curl -s "${script_url}?action=placed" > "data/day${day}-placed.json"
+            curl -sL "${script_url}?action=placed" > "data/day${day}-placed.json"
 
             echo "Fetching company list..."
-            curl -s "${script_url}?action=companies" > "data/day${day}-companies.json"
+            curl -sL "${script_url}?action=companies" > "data/day${day}-companies.json"
 
             echo "Validating company list JSON..."
             if ! jq empty "data/day${day}-companies.json" >/dev/null 2>&1; then
@@ -68,7 +68,7 @@ jobs:
               encoded_company=$(printf '%s' "$company" | jq -sRr @uri)
 
               echo "Fetching company data: day${day}-${company}"
-              curl -s "${script_url}?action=company&name=${encoded_company}" \
+              curl -sL "${script_url}?action=company&name=${encoded_company}" \
                 > "data/companies/day${day}-${company}.json"
 
               sleep 0.5
